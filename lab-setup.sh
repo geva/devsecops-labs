@@ -8,7 +8,6 @@ sudo apt-get -y install wget curl python3-pip python3-venv
 sudo apt-get -y install xrdp xfce4
 # echo xfce4-session >~/.xsession 
 
-
 # Setup Docker
 curl -sSL https://get.docker.com/ | sh
 
@@ -292,8 +291,6 @@ pip install docker-compose
 sh run.sh
 
 
-
-
 # Setup terminator
 sudo apt-get install -y terminator
 
@@ -420,6 +417,62 @@ gem install bundler-audit
 
 # Setup Python Pipeline
 pip install bandit safety
+
+
+# Anchore CLI
+
+mkdir ~/aevolume
+cd ~/aevolume
+
+docker pull docker.io/anchore/anchore-engine:latest
+docker create --name ae docker.io/anchore/anchore-engine:latest
+docker cp ae:/docker-compose.yaml ~/aevolume/docker-compose.yaml
+docker rm ae
+
+docker-compose pull
+docker-compose up -d
+
+# Clair
+wget https://github.com/arminc/clair-scanner/releases/download/v10/clair-scanner_linux_amd64
+
+# OSQuery
+wget https://pkg.osquery.io/deb/osquery_3.3.2_1.linux.amd64.deb
+
+dpkg -i osquery_3.3.2_1.linux.amd64.deb
+
+
+# Kubernetes
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
+apt update && apt install -y kubelet=1.10.3-00 kubeadm=1.10.3-00 kubectl=1.10.3-00 kubernetes-cni=0.6.0-00
+kubeadm reset
+sudo rm -rf ~/.kube
+kubeadm init --ignore-preflight-errors=SystemVerification
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/kubeadm/1.6/calico.yaml
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+# Kubebench
+go get github.com/aquasecurity/kube-bench
+go get github.com/golang/dep/cmd/dep
+cd $GOPATH/src/github.com/aquasecurity/kube-bench
+$GOPATH/bin/dep ensure -vendor-only
+go build -o kube-bench .
+./kube-bench --help
+./kube-bench
+
+# KubeHunter
+git clone https://github.com/aquasecurity/kube-hunter.git
+cd ./kube-hunter
+pip install -r requirements.txt
+
+#KubeAudit
+wget https://github.com/Shopify/kubeaudit/releases/download/v0.5.2/kubeaudit_0.5.2_linux_amd64.tar.gz
+tar -xvzf kubeaudit_0.5.2_linux_amd64.tar.gz
+mv kubeaudit /usr/local/bin/
+
 
 
 
