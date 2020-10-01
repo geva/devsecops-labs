@@ -1,2 +1,3 @@
 RESTinstance==1.0.0rc5
 RoboBurp2==1.2
+urllib3>=1.25.9 # not directly required, pinned by Snyk to avoid a vulnerability
