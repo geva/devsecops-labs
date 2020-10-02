@@ -1,3 +1,4 @@
 RESTinstance==1.0.0b35
 RoboBandit==1.1
 RoboZap==1.2
+urllib3>=1.25.9 # not directly required, pinned by Snyk to avoid a vulnerability
