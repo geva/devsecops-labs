@@ -1,2 +1,3 @@
 RESTinstance==1.0.0rc5
 RoboBurp2==1.2
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
