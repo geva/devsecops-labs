@@ -2,3 +2,4 @@ RESTinstance==1.0.0b35
 RoboZap==1.2
 RoboNodeJSScan
 RoboNpmAudit
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
